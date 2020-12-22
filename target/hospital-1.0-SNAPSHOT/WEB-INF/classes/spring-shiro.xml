@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-lazy-init="true" 
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/mvc 
+	http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+	http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	
+	<!-- 配置创建工厂  -->
+	<!-- 配置web.xml中,过滤器对应的spring容器的bean;     -->
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager"/>
+		<property name="loginUrl" value="/login"/>
+		<!-- 当前这个用户如果没有当前的这个权限,那么就发起这个请求 -->
+		<property name="unauthorizedUrl" value="/errorUI"/>
+
+		<!-- 配置过滤链 -->
+		<property name="filterChainDefinitions">
+			<value>
+			<!-- 静态资源不需要进行认证 -->
+			/assets/** = anon
+			/Css/** = anon
+			/Js/** = anon
+			/imgs/** = anon
+			
+			<!-- 登录是要匿名访问的 -->
+			/login = anon
+
+			
+			<!-- 如果发起的是退出 ,那么删除shiro里面的 session的数据; -->
+			/logout = logout
+			
+			
+			<!-- 配置每一个请求要的授权 -->
+			<!-- /menu/listUI = perms[sys:menu:view] 不可取 -->
+
+				<!--/registration/index/1/5 = perms[registration:index]-->
+
+			<!-- anon是过滤器的简称     表示所有的请求都可以进行匿名访问      /**=anon   -->
+			
+			<!-- 配置所有的请求都需要进行验证 -->
+				/** = authc
+			</value>
+		</property>
+	</bean>
+
+	<!-- 配置安全管理器; -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<!-- 配置 自定义的 realm  加入到安全管理器中-->
+		<property name="realm" ref="managerUserShiro"></property>
+		<!--注入缓存管理器-->
+		<property name="cacheManager" ref="cacheManager"></property>
+	</bean>
+
+
+	<!-- 配置缓存管理器 -->
+	<bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+		<!--<property name="cacheManagerConfigFile" value="classpath:shiro-ehcache.xml"></property>-->
+		<property name="cacheManagerConfigFile" value="classpath:shiro-ehcache.xml"/>
+	</bean>
+	
+	
+	<!-- 配置自定义的Realm -->
+	<bean id="managerUserShiro" class="com.sgu.shiro.MyShiroRealm">
+		<!-- 把凭证匹配器加入到realm中 -->
+<!--		<property name="credentialsMatcher" ref="credentialsMatcher"></property>-->
+	</bean>
+	
+
+
+	<!-- 配置凭证匹配器 -->
+<!--	<bean id="credentialsMatcher" class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">-->
+		<!-- 配置加密算法 -->
+<!--		<property name="hashAlgorithmName" value="MD5"></property>-->
+		<!-- 配置加密的次数 -->
+<!--		<property name="hashIterations" value="1"></property>-->
+<!--	</bean>-->
+	
+	
+	<!-- 配置基于注解的shiro,用于解析在controller上的加上权限注解  -->
+	<!-- 注入安全管理器中 -->
+	<bean id="advisor" class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+		<property name="securityManager" ref="securityManager"></property>
+	</bean>
+
+	</beans>

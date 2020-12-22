@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sgu.mapper.RegisterMapper">
+    <resultMap id="regMap" type="com.sgu.domain.Register">
+        <result column="bingLiId" property="bingLiId"/>
+        <result column="name" property="name"/>
+        <result column="identifierType" property="identifierType"/>
+        <result column="identifier" property="identifier"/>
+        <result column="insuranceint" property="insuranceint"/>
+        <result column="phone" property="phone"/>
+        <result column="expenseFlag" property="expenseFlag"/>
+        <result column="gender" property="gender"/>
+        <result column="age" property="age"/>
+        <result column="profession" property="profession"/>
+        <result column="czflag" property="czflag"/>
+        <result column="doctorId" property="doctorId"/>
+        <result column="createTime" property="createTime"/>
+        <result column="modifyTime" property="modifyTime"/>
+        <result column="status" property="status"/>
+        <result column="remark" property="remark"/>
+        <result column="guahaofei" property="guahaofei"/>
+        <result column="del" property="del"/>
+        <association property="d" javaType="com.sgu.domain.Doctor">
+            <result column="doctorName" property="name"/>
+        </association>
+
+        <association property="dep" javaType="com.sgu.domain.Dep">
+            <result column="depId" property="depId"/>
+            <result column="depCode" property="depCode"/>
+            <result column="depName" property="depName"/>
+        </association>
+    </resultMap>
+
+    <select id="queryRegisterByPage" resultMap="regMap">
+        select r.*, d.name as doctorName,d2.depid,d2.depCode,d2.depName
+        from register r
+        inner join doctor d on r.doctorId = d.doctorId
+        join dep d2 on d2.depId = d.depid
+
+        <where>
+            <if test="bingLiId != null and bingLiId != ''">
+                r.bingLiId = #{bingLiId,jdbcType=VARCHAR} and
+            </if>
+
+            <if test="doctorName != null and doctorName != ''">
+                d.name like concat('%', #{doctorName,jdbcType=VARCHAR}, '%') and
+            </if>
+
+
+            <if test="depName != null and depName != ''">
+                d2.depName = #{depName,jdbcType=VARCHAR} and
+            </if>
+
+            <if test="startCreateTime != null and startCreateTime != '' and endCreateTime != null and endCreateTime != ''">
+                r.createTime between #{startCreateTime,jdbcType=VARCHAR} and #{endCreateTime,jdbcType=VARCHAR} and
+            </if>
+            r.del = 0
+        </where>
+        order by r.createTime desc
+    </select>
+
+    <select id="queryRegisterByBlindId" resultMap="regMap">
+
+                select r.*, d.name as doctorName,d2.depid, d2.depCode, d2.depName
+        from register r
+                 inner join doctor d on r.doctorId = d.doctorId
+                 join dep d2 on d2.depId = d.depid
+        where r.bingLiId = #{id}
+
+    </select>
+
+    <update id="updateMoreBounceByList">
+        update register set status = 4 where bingLiId in
+        <foreach collection="list" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

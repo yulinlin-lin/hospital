@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sgu.mapper.DoctorMapper">
+    <resultMap id="doctorMap" type="com.sgu.domain.Doctor">
+        <id property="doctorId" column="doctorId"/>
+        <result property="name" column="name"/>
+        <result property="identifierType" column="identifierType"/>
+        <result property="identifier" column="identifier"/>
+        <result property="phone" column="phone"/>
+        <result property="telephone" column="telephone"/>
+        <result property="gender" column="gender"/>
+        <result property="age" column="age"/>
+        <result property="birthDate" column="birthDate"/>
+        <result property="email" column="email"/>
+        <result property="depid" column="depid"/>
+        <result property="degree" column="degree"/>
+        <result property="remark" column="remark"/>
+        <result property="createTime" column="createTime"/>
+        <result property="del" column="del"/>
+        <association property="dep" javaType="com.sgu.domain.Dep">
+            <id property="depId" column="depId"/>
+            <result property="depCode" column="depCode"/>
+            <result property="depName" column="depName"/>
+        </association>
+    </resultMap>
+
+
+    <select id="queryDoctorsByCondition" resultMap="doctorMap">
+        select d1.*, d.*
+        from doctor d1
+        join dep d on d.depId = d1.depid
+        <where>
+            <if test="doctorId!=null">
+                d1.doctorId = #{doctorId,jdbcType=INTEGER} and
+            </if>
+
+            <if test="name != null and name != ''">
+                d1.name like concat('%',#{name,jdbcType=VARCHAR},'%') and
+            </if>
+
+            <if test="depName != null and depName!=''">
+                d.depName = #{depName,jdbcType=VARCHAR} and
+            </if>
+            d1.del = 0 order by createTime desc
+        </where>
+    </select>
+
+    <select id="queryDoctorsById" resultMap="doctorMap">
+
+                select d1.*, d.*
+        from doctor d1
+                 join dep d on d.depId = d1.depid
+        where d1.doctorId = #{doctorId,jdbcType=INTEGER}
+
+    </select>
+</mapper>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sgu.mapper.ResourcesMapper">
+
+    <select id="queryResourcesByConditions" resultType="com.sgu.domain.Resources">
+        select * from resources
+        <where>
+            <if test="resname != null and resname != ''">
+                resname like concat('%',#{resname,jdbcType=VARCHAR},'%')
+            </if>
+            and del = 0 order by resId desc
+        </where>
+    </select>
+</mapper>

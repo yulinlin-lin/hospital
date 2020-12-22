@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sgu.mapper.UserARoleMapper">
+    <delete id="updateUserRoleId">
+
+        update user_role set roleId = #{rid,jdbcType=INTEGER}
+        where userId = #{userid,jdbcType=INTEGER} and roleId = #{oldroleid,jdbcType=INTEGER}
+
+    </delete>
+</mapper>

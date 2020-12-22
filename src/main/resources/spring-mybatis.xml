@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd">
+
+    <context:component-scan base-package="com.sgu.*">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+<!--    加载属性文件-->
+    <context:property-placeholder location="classpath:db.properties"/>
+
+    <!-- 3 配置数据源-->
+    <bean class="com.mchange.v2.c3p0.ComboPooledDataSource" id="dataSource">
+        <property name="driverClass" value="${jdbc.driverClasaName}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="user" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <!--配置sqlsession工厂对象-->
+    <bean class="com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean" id="sqlSessionFactoryBean">
+        <!--配置数据源-->
+        <property name="dataSource" ref="dataSource"/>
+
+        <!--开启别名
+            如果想要手动起一个别名，就到实体类中去  与一个注解：   @Alis()
+        -->
+        <property name="typeAliasesPackage" value="com.sgu.domain"/>
+
+        <!--配置所有的mapper.xml文件-->
+        <property name="mapperLocations" value="classpath:com/sgu/mapper/*.xml"/>
+
+        <!--这里配置mybatis的配置文件-->
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+        <property name="globalConfig" ref="globalConfiguration"/>
+     </bean>
+
+    <!--扫描指定包下的接口文件-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" id="mapperScannerConfigurer">
+        <property name="basePackage" value="com.sgu.mapper"/>
+    </bean>
+
+    <!--配置事务管理器-->
+    <bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+          id="transactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+
+    <tx:annotation-driven transaction-manager="transactionManager"></tx:annotation-driven>
+
+
+    <!--2.3后，mybatisplus会自动帮你进行驼峰命名法的转换，如果想要关闭它，就设置下面的设置为false;-->
+    <bean class="com.baomidou.mybatisplus.entity.GlobalConfiguration" id="globalConfiguration">
+        <property name="dbColumnUnderline" value="false"/>
+
+        <!-- 全局主键自增策略，0表示auto    所有的表插入记录的主键都是自增的；-->
+        <property name="idType" value="0"/>
+
+
+        <!-- 全局表前缀配置 -->
+        <property name="tablePrefix" value="tb_"/>
+    </bean>
+
+
+
+
+
+</beans>

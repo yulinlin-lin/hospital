@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sgu.mapper.UsersMapper">
+    <resultMap id="userMap" type="com.sgu.domain.Users">
+        <id column="userid" property="userid"/>
+        <result column="no" property="no"/>
+        <result column="password" property="password"/>
+        <result column="realname" property="realname"/>
+        <result column="email" property="email"/>
+        <result column="status" property="status"/>
+        <result column="del" property="del"/>
+        <result column="modifytime" property="modifytime"/>
+        <result column="createTime" property="createTime"/>
+        <association property="role" javaType="com.sgu.domain.Role">
+            <id column="roleId" property="roleId"/>
+            <result column="roleNum" property="roleNum"/>
+            <result column="roleName" property="roleName"/>
+            <result column="roleStatus" property="status"/>
+            <result column="roleDel" property="del"/>
+        </association>
+    </resultMap>
+
+    <select id="queryUsersByCondition" resultMap="userMap">
+        select u.*,r.roleId,r.roleNum,r.roleName,r.status as roleStatus,r.del as roleDel
+        from users u,user_role ur,role r
+        <where>
+            <if test="realname != null and realname != ''">
+                u.realname like concat('%',#{realname,jdbcType=VARCHAR},'%') and
+            </if>
+            u.userid = ur.userId and ur.roleId = r.roleId and u.del = 0 order by createTime desc
+        </where>
+    </select>
+
+    <select id="queryOneById" resultMap="userMap">
+
+
+
+
+
+
+                                                        select u.*,r.roleId,r.roleNum,r.roleName,r.status as roleStatus,r.del as roleDel
+                                        from users u,user_role ur,role r
+                                        where u.userid = #{userid,jdbcType=INTEGER} and
+                                              u.userid = ur.userId and ur.roleId = r.roleId and u.del = 0
+
+
+
+
+
+
+    </select>
+
+    <select id="selectOneByName" resultType="com.sgu.domain.Users">
+
+
+
+
+                                        SELECT * FROM users WHERE NO = #{username,jdbcType=VARCHAR}
+
+
+
+
+    </select>
+
+    <select id="queryUsersMenus" resultType="java.util.Map">
+
+
+
+
+                                        select m.*
+                                        from user_role ur join role_resources rm join resources m
+                                        on ur.roleId = rm.roleId and rm.resId = m.resId
+                                             and  ur.userId = #{userid,jdbcType=INTEGER}
+
+
+
+
+    </select>
+
+    <select id="queryUsersAllMenus" resultType="java.lang.String">
+
+
+
+                                select r.resurl from user_role ur join role_resources rr
+                            on ur.roleId = rr.roleId join resources r on r.resId = rr.resId
+                        where ur.userId = #{userid,jdbcType=INTEGER}
+
+
+
+    </select>
+</mapper>
