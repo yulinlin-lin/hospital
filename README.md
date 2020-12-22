@@ -8,3 +8,26 @@ hospital
 页面展示
 一.登录页面
  ![image](https://github.com/yulinlin-lin/hospital/blob/main/2.PNG)
+ 
+ ![image](https://github.com/yulinlin-lin/hospital/blob/main/projectPicture/gouChange.PNG)
+ 
+ 二.药品管理
+  ![image](https://github.com/yulinlin-lin/hospital/blob/main/projectPicture/medi.PNG)
+   ![image](https://github.com/yulinlin-lin/hospital/blob/main/projectPicture/mediDetil.PNG)
+ 
+ 三.门诊医生管理
+   ![image](https://github.com/yulinlin-lin/hospital/blob/main/projectPicture/doctor.PNG)
+ 
+四. 用户管理
+   ![image](https://github.com/yulinlin-lin/hospital/blob/main/projectPicture/user.PNG)
+ 
+五. 角色管理
+   ![image](https://github.com/yulinlin-lin/hospital/blob/main/projectPicture/role.PNG)
+ 
+ 
+六. 资源管理
+  ![image](https://github.com/yulinlin-lin/hospital/blob/main/projectPicture/resources.PNG)
+  
+  
+七. 密码重置
+![image](https://github.com/yulinlin-lin/hospital/blob/main/projectPicture/passrest.PNG)
